@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { faker } from "@faker-js/faker";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 type CreditCardBrand = 'Visa' | 'Mastercard' | 'American Express' | 'Discover' | 'JCB' | 'Diners Club' | 'UnionPay';
 
@@ -111,7 +114,17 @@ export function Component() {
     const cards = generateCreditCardDetails(selectedCardBrand, selectedCVV, selectedExpMonth, selectedExpYear, parseInt(selectedQuantity));
     setGeneratedCards(cards);
   };
-
+  //copy to clipboard
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      toast.success('Copied to clipboard!', {
+        autoClose: 800, // 3 seconds
+      });
+    }, (err) => {
+      console.error('Could not copy text: ', err);
+      toast.error('Failed to copy text.');
+    });
+  };
   return (
     <section key="1" className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-[#6a11cb] to-[#2575fc]">
       <div className="container mx-auto max-w-4xl px-4 md:px-6">
@@ -326,16 +339,49 @@ export function Component() {
                 </form>
               </Card>
               <div className="mt-8 space-y-4">
-                {generatedCards.map((card, index) => (
-                  <div key={index} className="p-4 bg-white shadow-md rounded-md">
-                    <h2 className="text-xl font-semibold">{card.brand} Credit Card</h2>
-                    <p>Number: {card.number}</p>
-                    <p>CVV: {card.cvv}</p>
-                    <p>Expiration Date: {card.expMonth}/{card.expYear}</p>
-                    <p>Card Holder Name: {card.cardHolderName}</p>
-                  </div>
-                ))}
-              </div>
+      <ToastContainer />
+      {generatedCards.map((card, index) => (
+        <div key={index} className="p-4 bg-white shadow-md rounded-md">
+          <h2 className="text-xl font-semibold">{card.brand} Credit Card</h2>
+          <div className="flex items-center">
+            <p>Number: {card.number}</p>
+            <button 
+              onClick={() => copyToClipboard(card.number)} 
+              className="ml-2 px-2 py-1 bg-blue-500 text-white rounded"
+            >
+              Copy
+            </button>
+          </div>
+          <div className="flex items-center">
+            <p>CVV: {card.cvv}</p>
+            <button 
+              onClick={() => copyToClipboard(card.cvv)} 
+              className="ml-2 px-2 py-1 bg-blue-500 text-white rounded"
+            >
+              Copy
+            </button>
+          </div>
+          <div className="flex items-center">
+            <p>Expiration Date: {card.expMonth}/{card.expYear}</p>
+            <button 
+              onClick={() => copyToClipboard(`${card.expMonth}/${card.expYear}`)} 
+              className="ml-2 px-2 py-1 bg-blue-500 text-white rounded"
+            >
+              Copy
+            </button>
+          </div>
+          <div className="flex items-center">
+            <p>Card Holder Name: {card.cardHolderName}</p>
+            <button 
+              onClick={() => copyToClipboard(card.cardHolderName)} 
+              className="ml-2 px-2 py-1 bg-blue-500 text-white rounded"
+            >
+              Copy
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
             </TabsContent>
             <TabsContent value="advanced">
               <Card className="p-6 bg-white shadow-lg rounded-2xl">
@@ -595,6 +641,24 @@ export function Component() {
               </Card>
             </TabsContent>
           </Tabs>
+        </div>
+      </div>
+      {/* FAQ  */}
+      <div className="mt-12 px-4 md:px-6">
+        <h2 className="text-2xl font-bold text-white">FAQ</h2>
+        <div className="mt-4 space-y-4">
+          <details className="bg-white p-4 rounded-lg shadow-md">
+            <summary className="font-semibold text-[#6a11cb] cursor-pointer">What is this tool for?</summary>
+            <p className="mt-2 text-gray-700">This tool generates valid test credit card numbers for testing purposes, service sign-ups, and payment gateway trials.</p>
+          </details>
+          <details className="bg-white p-4 rounded-lg shadow-md">
+            <summary className="font-semibold text-[#6a11cb] cursor-pointer">How do I generate a card number?</summary>
+            <p className="mt-2 text-gray-700">Select the card brand, CVV, expiration month, and year, then click "Generate Cards". You can also choose the quantity of cards to generate.</p>
+          </details>
+          <details className="bg-white p-4 rounded-lg shadow-md">
+            <summary className="font-semibold text-[#6a11cb] cursor-pointer">Can these card numbers be used for real transactions?</summary>
+            <p className="mt-2 text-gray-700">No, these card numbers are only for testing purposes and cannot be used for real transactions.</p>
+          </details>
         </div>
       </div>
     </section>
